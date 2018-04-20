@@ -3,6 +3,8 @@ import com.hjk.matrix.Matrix;
 
 //import com.hjk.lstm.Lstm;
 public class Demo {
+
+
     public static void main(String[] args)
     {
         double[][] array = {{1},{3}};
@@ -17,6 +19,13 @@ public class Demo {
         Matrix pre_y = lstm.predict(x);
         pre_y.print(6, 4);
         System.out.println(lstm.loss(X,Y));
+        lstm._bptt(x,y);
+
 
     }
+
+
+
+
+
 }
