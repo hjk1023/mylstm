@@ -405,6 +405,16 @@ public class Matrix implements Cloneable, java.io.Serializable {
         return f;
     }
 
+    public double norm_mse () {
+        double f = 0;
+        for (int j = 0; j < n; j++) {
+            for (int i = 0; i < m; i++) {
+                f += Math.pow(A[i][j],2);
+            }
+        }
+        return f;
+    }
+
     /** Infinity norm
      @return    maximum row sum.
      */
@@ -701,7 +711,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
     }
 
     // 激活函数 sigmoid
-    public Matrix sigmoid(Matrix matrix) {
+    public static Matrix sigmoid(Matrix matrix) {
         int rows = matrix.getRowDimension();
         int cols = matrix.getColumnDimension();
         Matrix matrix_sigmoid;
@@ -716,7 +726,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
     }
 
     // 激活函数 tanh
-    public Matrix tanh(Matrix matrix){
+    public static Matrix tanh(Matrix matrix){
         // (exp(x) - exp(-x))/(exp(x) + exp(-x))
         Matrix matrix_p = exp(matrix);
         Matrix matrix_n = exp(matrix.uminus());
