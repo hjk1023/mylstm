@@ -12,7 +12,7 @@ public class Data {
     private Matrix[] pre_x;
 
     // 虚拟机数量除以100
-    private double threshold = 100;
+    private double threshold = 40;
 
 
 

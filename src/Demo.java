@@ -15,17 +15,22 @@ public class Demo {
 
 
         // 虚构数据
-        int[] data = new int[60];
+        int[] data0 = new int[60];
         for (int i = 0; i < 60; i++){
-            data[i] = i + 1;
+            data0[i] = i + 1;
         }
 
+        int[] data = {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1, 6, 0, 0, 0, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 2, 1, 0, 2, 1, 0,
+                0, 3, 1, 1};
+
         // 间隔天数
-        int day_interval = 5;
+        int day_interval = 0;
         // 预测天数
         int day_pre = 7;
 
         int pre_vm = predictor_lstm(data, day_interval, day_pre);
+
 
 
 
@@ -48,8 +53,8 @@ public class Demo {
         // 初始化LSTM
         Network lstm = new Network(1, 4);
 
-        // 训练LSTM
-        lstm.train(train_x, train_y, 1, 100);
+        // 训练LSTM， lr：学习速率 epochs: 迭代次数
+        lstm.train(train_x, train_y, 10, 200);
 
 
         // 滚动预测
@@ -60,6 +65,7 @@ public class Demo {
         for (int i = 1; i < day_interval + day_pre; i++) {
             pre_x = train.nextPre_x(pre_y);
             pre_y = lstm.predict(pre_x);
+            pre_y.print(10,8);
             pre_arr[i] = pre_y;
         }
 
@@ -68,6 +74,7 @@ public class Demo {
         for (int i = day_interval; i < day_interval + day_pre; i++){
             double value = pre_arr[i].get(0,0);
             value = train.normalize_re(value);
+            value = Math.round(value);
             if (value < 0){
                 value = 0;
             }
