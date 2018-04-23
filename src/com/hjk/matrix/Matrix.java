@@ -687,6 +687,18 @@ public class Matrix implements Cloneable, java.io.Serializable {
     }
 
     // my functions from here
+
+    public Matrix sqrt () {
+        Matrix X = new Matrix(m,n);
+        double[][] C = X.getArray();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                C[i][j] = Math.sqrt(A[i][j]);
+            }
+        }
+        return X;
+    }
+
     public static Matrix uniform (double a, double b, int m, int n) {
         Matrix A = new Matrix(m, n);
         double[][] X = A.getArray();

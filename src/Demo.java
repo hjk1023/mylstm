@@ -20,8 +20,8 @@ public class Demo {
             data0[i] = i + 1;
         }
 
-        int[] data = {3,  9,  3,  0,  0, 11,  0, 22,  2,  3,  0,  0,  4, 17,  0,  4,  8,
-                1,  2,  0,  6, 11,  2, 12, 20,  8,  0, 8,  2,  0, 17};
+        int[] data = {0,  0,  2,  0,  0,  1,  4,  0,  0, 11,  0,  0,  0,  3,  0,  0,  2,
+                2,  1,  5,  6,  0, 10,  0, 16,  3,  0, 6,  2,  0,  4};
 
         // 间隔天数
         int day_interval = 7;
@@ -53,7 +53,7 @@ public class Demo {
         Network lstm = new Network(1, 4);
 
         // 训练LSTM， lr：学习速率 epochs: 迭代次数
-        lstm.train(train_x, train_y, 3, 0.3, 100);
+        lstm.train(train_x, train_y, 3, 0.1, 50);
 
 
         // 滚动预测

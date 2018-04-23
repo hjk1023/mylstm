@@ -33,33 +33,47 @@ public class Weight{
 
 class Weight_whwx {
     Matrix wh, wx, b;
+    Adam adam_wh;
+    Adam adam_wx;
+    Adam adam_b;
 
     public Weight_whwx(int data_dim, int hidden_dim) {
         this.wh = Matrix.uniform(-Math.sqrt(6.0/(hidden_dim + hidden_dim + 1)), Math.sqrt(6.0/(hidden_dim + hidden_dim + 1)), hidden_dim, hidden_dim);
         this.wx = Matrix.uniform(-Math.sqrt(6.0/(data_dim + hidden_dim + 1)), Math.sqrt(6.0/(data_dim + hidden_dim + 1)), hidden_dim, data_dim);
         this.b = Matrix.uniform(-Math.sqrt(1.0/data_dim), Math.sqrt(1.0/data_dim), hidden_dim, 1);
+        adam_wh = new Adam(wh);
+        adam_wx = new Adam(wx);
+        adam_b = new Adam(b);
 
 
     }
 
     public void update(DWeight_whwx dWeight_whwx, double lr){
-        this.wh.minusEquals(dWeight_whwx.dwh.times(lr));
-        this.wx.minusEquals(dWeight_whwx.dwx.times(lr));
-        this.b.minusEquals(dWeight_whwx.db.times(lr));
+
+        this.wh.minusEquals(this.adam_wh.update(dWeight_whwx.dwh).times(lr));
+        this.wx.minusEquals(this.adam_wx.update(dWeight_whwx.dwx).times(lr));
+        this.b.minusEquals(this.adam_b.update(dWeight_whwx.db).times(lr));
     }
 }
 
 
 class Weight_wy{
     Matrix w, b;
+    Adam adam_w;
+    Adam adam_b;
+
 
     public Weight_wy(int data_dim, int hidden_dim) {
         this.w = Matrix.uniform(-Math.sqrt(6.0/(data_dim + hidden_dim + 1)), Math.sqrt(6.0/(data_dim + hidden_dim + 1)), data_dim, hidden_dim);
         this.b = Matrix.uniform(-Math.sqrt(6.0/(data_dim + hidden_dim + 1)), Math.sqrt(6.0/(data_dim + hidden_dim + 1)), data_dim, 1);
+        adam_w = new Adam(w);
+        adam_b = new Adam(b);
+
     }
 
     public void update(DWeight_wy dWeight_wy, double lr){
-        this.w.minusEquals(dWeight_wy.dw.times(lr));
-        this.b.minusEquals(dWeight_wy.db.times(lr));
+
+        this.w.minusEquals(this.adam_w.update(dWeight_wy.dw).times(lr));
+        this.b.minusEquals(this.adam_b.update(dWeight_wy.db).times(lr));
     }
 }
