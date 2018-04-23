@@ -20,12 +20,11 @@ public class Demo {
             data0[i] = i + 1;
         }
 
-        int[] data = {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1, 6, 0, 0, 0, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 2, 1, 0, 2, 1, 0,
-                0, 3, 1, 1};
+        int[] data = {3,  9,  3,  0,  0, 11,  0, 22,  2,  3,  0,  0,  4, 17,  0,  4,  8,
+                1,  2,  0,  6, 11,  2, 12, 20,  8,  0, 8,  2,  0, 17};
 
         // 间隔天数
-        int day_interval = 0;
+        int day_interval = 7;
         // 预测天数
         int day_pre = 7;
 
@@ -54,7 +53,7 @@ public class Demo {
         Network lstm = new Network(1, 4);
 
         // 训练LSTM， lr：学习速率 epochs: 迭代次数
-        lstm.train(train_x, train_y, 10, 200);
+        lstm.train(train_x, train_y, 3, 0.3, 100);
 
 
         // 滚动预测
@@ -65,21 +64,25 @@ public class Demo {
         for (int i = 1; i < day_interval + day_pre; i++) {
             pre_x = train.nextPre_x(pre_y);
             pre_y = lstm.predict(pre_x);
-            pre_y.print(10,8);
             pre_arr[i] = pre_y;
         }
 
         // pre_vm， 预测区间的虚拟机数量
         int pre_vm = 0;
+        double sum = 0;
         for (int i = day_interval; i < day_interval + day_pre; i++){
             double value = pre_arr[i].get(0,0);
             value = train.normalize_re(value);
-            value = Math.round(value);
+            System.out.println(value);
+            //value = Math.round(value);
+
             if (value < 0){
                 value = 0;
             }
-            pre_vm += (int)value;
+            sum += value;
         }
+        sum = Math.round(sum);
+        pre_vm = (int) sum;
         System.out.printf("predict vm numbers: %d", pre_vm);
         return pre_vm;
     }

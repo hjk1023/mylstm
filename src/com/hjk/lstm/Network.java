@@ -2,6 +2,10 @@ package com.hjk.lstm;
 
 import com.hjk.matrix.Matrix;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class Network {
@@ -67,6 +71,7 @@ public class Network {
         // (pre_y-y)*pre_y*(1-pre_y)
         delta_yz[step-1] = pre_y.minus(y).arrayTimes(sigmod_d);
 
+
         for (int t = step - 1; t >= 0; t-- ){
             // 输出层wy, by的偏导数 z = wy*h + by
             // todo check here
@@ -95,25 +100,44 @@ public class Network {
         return dWeight;
     }
 
-    public void sgd_step(Matrix[] x, Matrix y, double lr){
-        DWeight dWeight = this._bptt(x, y);
-        this.weight.update_hx(dWeight, lr);
-        this.weight.update_y(dWeight, lr);
+    public void sgd_batch(Matrix[][] x_batch, Matrix[] y_batch, double lr){
+        int batch_size = x_batch.length;
+        DWeight dWeight_sum = new DWeight(this.data_dim, this.hidden_dim);
+        for (int i = 0; i < batch_size; i++){
+            DWeight dWeight = this._bptt(x_batch[i], y_batch[i]);
+            dWeight_sum = dWeight_sum.add(dWeight);
+        }
+
+        this.weight.update_hx(dWeight_sum, lr/batch_size);
+        this.weight.update_y(dWeight_sum, lr/batch_size);
     }
 
-    public void train(Matrix[][] X, Matrix[] Y, double lr, int epochs){
+    public void train(Matrix[][] X, Matrix[] Y,int batch_size, double lr, int epochs){
         double[] losses = new double[epochs];
         long startime = System.currentTimeMillis();
+        int nb_sample = X.length;
+        Matrix[][] x_batch;
+        Matrix[] y_batch;
+
         for (int i = 0; i < epochs; i++){
-            for (int j = 0; j < X.length; j++){
-                this.sgd_step(X[j], Y[j], lr);
+            // 打乱样本
+            Matrix[][] X_shuffle =new Matrix[nb_sample][];
+            Matrix[] Y_shuffle = new Matrix[nb_sample];
+            int[] index = Random_index(nb_sample);
+            for (int k = 0; k < nb_sample; k++){
+                X_shuffle[k] = X[index[k]];
+                Y_shuffle[k] = Y[index[k]];
+            }
+            // train on batch
+            for (int j = 0; j < nb_sample - batch_size; j += batch_size) {
+                x_batch = Arrays.copyOfRange(X_shuffle, j, j + batch_size);
+                y_batch = Arrays.copyOfRange(Y_shuffle, j, j + batch_size);
+
+                this.sgd_batch(x_batch, y_batch, lr);
             }
             losses[i] = this.loss(X, Y);
-            if (i > 0 && losses[i] > losses[i-1]){
-                lr *= 0.7;
-                System.out.printf("lr decrease to: %f\n", lr);
-            }
             System.out.printf("epoch %d: ; loss = %f\n", i,losses[i]*1000);
+
         }
         long endtime = System.currentTimeMillis();
         System.out.printf("training time: %.2f s\n", (endtime-startime)/1000.0);
@@ -132,6 +156,22 @@ public class Network {
     private  Matrix _tanh_derivate(Matrix y){
         Matrix one = new Matrix(y.getRowDimension(), y.getColumnDimension(), 1.0);
         return one.minus(y.arrayTimes(y));
+    }
+
+    // shuffle index
+    public int[] Random_index(int len){
+        int[] index = new int[len];
+        List list = new ArrayList();
+        for (int i = 0; i < len; i++){
+            list.add(i);
+        }
+        Collections.shuffle(list);
+        for (int i = 0; i < len; i++){
+            index[i] = (int) list.get(i);
+
+        }
+
+        return index;
     }
 
 }

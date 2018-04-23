@@ -10,9 +10,10 @@ public class Data {
     private Matrix[] train_y;
 
     private Matrix[] pre_x;
+    private int[] data;
 
     // 虚拟机数量除以100
-    private double threshold = 40;
+    private double threshold = 100;
 
 
 
@@ -20,7 +21,11 @@ public class Data {
 
     // 构造函数
     public Data(int[] data, int step) {
+        this.data = data;
+        this.setThreshold(getMax(data));
+
         double[] data_norm = this.normalize(data);
+
         this.create_pre_x(data_norm, step);
         this.create_sample(data_norm, step);
     }
@@ -79,7 +84,7 @@ public class Data {
         }
     }
 
-    public double[] normalize(int[] data){
+    private double[] normalize(int[] data){
         double[] data_norm = new double[data.length];
         for (int i = 0; i < data.length; i++){
             data_norm[i] = data[i] / this.threshold;
@@ -90,6 +95,19 @@ public class Data {
     public double normalize_re(double d){
         return d*this.threshold;
     }
+
+    public int getMax(int[] data){
+        int max = data[0];
+        for (int i = 1; i < data.length; i++){
+            if (max < data[i]){
+                max = data[i];
+            }
+        }
+        return max;
+    }
+
+
+
 
 
 

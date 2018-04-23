@@ -9,6 +9,7 @@ public class Weight{
     Weight_whwx whwx_a;
     Weight_wy wy;
 
+    // 构造函数， 初始化权重
     public Weight(int data_dim, int hidden_dim) {
         this.whwx_i = new Weight_whwx(data_dim, hidden_dim);
         this.whwx_f = new Weight_whwx(data_dim, hidden_dim);
@@ -17,6 +18,7 @@ public class Weight{
         this.wy = new Weight_wy(data_dim, hidden_dim);
     }
 
+    // 更新权重
     public void update_hx(DWeight dWeight, double lr){
         this.whwx_i.update(dWeight.dwhwx_i, lr);
         this.whwx_f.update(dWeight.dwhwx_f, lr);
@@ -35,7 +37,7 @@ class Weight_whwx {
     public Weight_whwx(int data_dim, int hidden_dim) {
         this.wh = Matrix.uniform(-Math.sqrt(6.0/(hidden_dim + hidden_dim + 1)), Math.sqrt(6.0/(hidden_dim + hidden_dim + 1)), hidden_dim, hidden_dim);
         this.wx = Matrix.uniform(-Math.sqrt(6.0/(data_dim + hidden_dim + 1)), Math.sqrt(6.0/(data_dim + hidden_dim + 1)), hidden_dim, data_dim);
-        this.b = Matrix.uniform(-Math.sqrt(6.0/(data_dim + hidden_dim + 1)), Math.sqrt(6.0/(data_dim + hidden_dim + 1)), hidden_dim, 1);
+        this.b = Matrix.uniform(-Math.sqrt(1.0/data_dim), Math.sqrt(1.0/data_dim), hidden_dim, 1);
 
 
     }
