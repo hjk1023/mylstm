@@ -116,6 +116,9 @@ public class Network {
         double[] losses = new double[epochs];
         long startime = System.currentTimeMillis();
         int nb_sample = X.length;
+        // check poiint
+        Weight weight_minloss = this.weight;
+        double loss_min = 999999;
         Matrix[][] x_batch;
         Matrix[] y_batch;
 
@@ -136,11 +139,18 @@ public class Network {
                 this.sgd_batch(x_batch, y_batch, lr);
             }
             losses[i] = this.loss(X, Y);
-            System.out.printf("epoch %d: ; loss = %f\n", i,losses[i]*1000);
+            //System.out.printf("epoch %d: ; loss = %f\n", i,losses[i]*1000);
+            if (loss_min > losses[i]){
+                loss_min = losses[i];
+                weight_minloss = this.weight;
+            }
+
 
         }
+        this.weight = weight_minloss;
+        //System.out.printf("min loss: %f\n", loss_min*1000);
         long endtime = System.currentTimeMillis();
-        System.out.printf("training time: %.2f s\n", (endtime-startime)/1000.0);
+        //System.out.printf("training time: %.2f s\n", (endtime-startime)/1000.0);
     }
 
 
