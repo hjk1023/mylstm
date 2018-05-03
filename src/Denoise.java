@@ -1,5 +1,4 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+
 
 public class Denoise {
     public static int[][] deleteAbnormalData(int[][] data) {

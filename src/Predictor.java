@@ -16,16 +16,16 @@ public class Predictor {
         int[][] train, test;
         int result[] = new int[18];
         int result_true[] = new int[18];
-        String path = "C:\\Users\\huangjk\\Desktop\\复赛文档\\练习数据\\mytrain\\train.csv";
-        String tpath = "C:\\Users\\huangjk\\Desktop\\复赛文档\\练习数据\\mytrain\\test.csv";
+        String path = "C:\\Users\\huangjk\\Desktop\\testdata\\train.csv";
+        String tpath = "C:\\Users\\huangjk\\Desktop\\testdata\\test.csv";
         train = IO.read(path);
         test = IO.read(tpath);
-        //train = Denoise.deleteAbnormalData(train);
+        train = Denoise.deleteAbnormalData(train);
 
         // 间隔天数
-        int day_interval = 3;
+        int day_interval = 1;
         // 预测天数
-        int day_pre = 5;
+        int day_pre = 7;
 
 
         int N = train.length;
@@ -71,15 +71,25 @@ public class Predictor {
          */
 
         // 构造训练样本， data: 为一种flavor的历史请求数量
-        Data train = new Data(data, 14);
+        int step = day_interval + day_pre;
+        Data train = new Data(data, step);
         Matrix[][] train_x = train.getTrain_x();
         Matrix[] train_y = train.getTrain_y();
 
         // 初始化LSTM
-        Network lstm = new Network(1, 4);
+        int epochs;
+        if (data.length > 70){
+            epochs =  50;
+        }
+        else {
+            epochs = 60;
+        }
+        Network lstm = new Network(1, 8);
 
         // 训练LSTM， lr：学习速率 epochs: 迭代次数
-        lstm.train(train_x, train_y, 4, 0.5, 30);
+        lstm.train(train_x, train_y, 8, 0.1, epochs);
+
+
 
 
         // 滚动预测
