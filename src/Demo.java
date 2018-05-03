@@ -11,7 +11,7 @@ public class Demo {
 
     public static void main(String[] args){
         int step = 7;
-        int[] data = new int[600];
+        int[] data = new int[100];
         for (int i = 0; i < data.length; i++) {
             data[i] = i;
         }
@@ -25,7 +25,7 @@ public class Demo {
         Network lstm = new Network(1, 8);
 
         // 训练LSTM， lr：学习速率 epochs: 迭代次数
-        lstm.train(train_x, train_y, 64, 0.05, epochs);
+        lstm.train(train_x, train_y, data.length/4, 0.05, epochs);
     }
 
 
